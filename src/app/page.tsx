@@ -31,15 +31,16 @@ const test: Post = {
 
 function Post({ post }: { post: Post }) {
   return (
-    <div className="w-2/3 h-44 bg-slate-600 p-2 rounded-lg z-0">
+    <div className="w-2/3 h-48 bg-slate-600 p-2 rounded-lg">
       <Link href="/">
         <div className="h-8 center font-bold text-lg pl-2 truncate">
           {post.data.title}
         </div>
       </Link>
-      <div className="bg-slate-700 w-full h-32 rounded-md p-2 line-clamp-5 pointer-events-auto z-10">
+      <div className="bg-slate-700 w-full h-32 rounded-md p-2 line-clamp-5">
         {post.data.content}
       </div>
+      <div className="pr-2 pt-1 flex justify-end text-xs">{post.date}</div>
     </div>
   );
 }
