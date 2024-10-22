@@ -3,10 +3,10 @@ import { Suspense } from "react";
 
 export type Post = {
   id: string;
-  data: {
-    title: string;
-    content: string;
-  };
+
+  title: string;
+  content: string;
+
   date: string;
 };
 const title =
@@ -22,10 +22,8 @@ const text = `Lorem Ipsum is simply dummy text of the printing and typesetting i
 
 const test: Post = {
   id: "1a23s4d",
-  data: {
-    title: title,
-    content: text,
-  },
+  title: title,
+  content: text,
   date: "01/01/2024",
 };
 
@@ -34,11 +32,11 @@ function Post({ post }: { post: Post }) {
     <div className="w-2/3 h-48 bg-slate-600 p-2 rounded-lg">
       <Link href="/">
         <div className="h-8 center font-bold text-lg pl-2 truncate">
-          {post.data.title}
+          {post.title}
         </div>
       </Link>
       <div className="bg-slate-700 w-full h-32 rounded-md p-2 line-clamp-5">
-        {post.data.content}
+        {post.content}
       </div>
       <div className="pr-2 pt-1 flex justify-end text-xs">{post.date}</div>
     </div>
