@@ -1,4 +1,9 @@
-import { Post, PrismaClient } from "@prisma/client";
+"use server";
+
+import { PrismaClient } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -13,26 +18,79 @@ const text = `Lorem Ipsum is simply dummy text of the printing and typesetting i
       and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 `;
 
-const testPost: Post = {
-  id: "1a23s4d",
+const testPost = {
   title: title,
   content: text,
-  createdAt: new Date(),
 };
 
-async function main() {
-  // ... you will write your Prisma Client queries here
-  const upload = await prisma.post.create({
-    data: testPost,
+const PostSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  content: z.string(),
+  createdAt: z.date(),
+});
+
+const CreatePost = PostSchema.omit({ id: true, createdAt: true });
+
+const perPage = 6;
+
+export type State = {
+  errors?: {
+    title?: string[];
+    content?: string[];
+  };
+  message?: string | null;
+};
+
+export async function createPost(prevState: State, postData: FormData) {
+  const validateFields = CreatePost.safeParse({
+    title: postData.get("title"),
+    content: postData.get("content"),
   });
+
+  if (!validateFields.success) {
+    return {
+      errors: validateFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to create post",
+    };
+  }
+
+  const { title, content } = validateFields.data;
+
+  try {
+    await prisma.post.create({
+      data: {
+        title: title,
+        content: content,
+      },
+    });
+  } catch (error) {
+    return {
+      message: "Database Error: Failed to create post.",
+    };
+  }
+
+  // revalidatePath("/")
+  redirect("/");
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+// async function fetchPosts(page: number) {
+//   const posts = await prisma.post.findMany({});
+// }
+
+// async function main() {
+//   // ... you will write your Prisma Client queries here
+//   const upload = await prisma.post.create({
+//     data: testPost,
+//   });
+// }
+
+// createPost(testPost)
+//   .then(async () => {
+//     await prisma.$disconnect();
+//   })
+//   .catch(async (e) => {
+//     console.error(e);
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   });

@@ -47,7 +47,9 @@ export default function Home() {
   //fetch posts pass into posts
   return (
     <div className="flex flex-col place-items-center p-4 gap-4">
-      <div className="w-2/3 h-20 outline">Create new post</div>
+      <Link href="/posts/create" className="w-2/3 h-20 outline">
+        Create new post
+      </Link>
       <Suspense>
         {/* Map posts here */}
         <Post post={test} />

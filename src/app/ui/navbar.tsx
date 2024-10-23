@@ -2,18 +2,14 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-row items-center place-content-evenly gap-4 outline w-full h-16 p-4">
-        <Link href="/">
-          <div>Home</div>
-        </Link>
-        <Link href="/">
-          <div>Feed</div>
-        </Link>
-        <Link href="/">
-          <div>Home</div>
-        </Link>
-      </div>
+    <div className="flex flex-row gap-4 items-center justify-between outline w-full h-16 px-4">
+      <Link className="outline" href="/">
+        <div>Home Logo</div>
+      </Link>
+      <Link href="/" className="outline">
+        <div>Search Box</div>
+      </Link>
+      <div className="outline">Login</div>
     </div>
   );
 }
