@@ -3,7 +3,7 @@
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import { date, z } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -74,9 +74,28 @@ export async function createPost(prevState: State, postData: FormData) {
   redirect("/");
 }
 
-// async function fetchPosts(page: number) {
-//   const posts = await prisma.post.findMany({});
-// }
+export async function fetchPosts(page: number) {
+  const start = page == 0 ? 0 : page * perPage + 1;
+
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  try {
+    const posts = await prisma.post.findMany({
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
+      skip: start,
+      take: perPage,
+    });
+
+    return posts;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of posts.");
+  }
+}
 
 // async function main() {
 //   // ... you will write your Prisma Client queries here

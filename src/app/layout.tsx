@@ -30,9 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}>
         <Navbar />
-        <div className="flex flex-row h-full outline">
+        <div className="flex flex-row h-full overflow-hidden outline">
           <SideNav />
-          <div className="flex-grow outline">{children}</div>
+          <div className="flex-grow outline overflow-y-scroll">{children}</div>
         </div>
       </body>
     </html>
