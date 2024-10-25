@@ -13,8 +13,11 @@ function PostBox({ post }: { post: Post }) {
       <div className="bg-slate-700 w-full h-32 rounded-md p-2 line-clamp-5">
         {post.content}
       </div>
-      <div className="pr-2 pt-1 flex justify-end text-xs">
-        {post.createdAt.toISOString().split("T")[0]}
+      <div className="flex flex-row w-full">
+        <Link href={`/posts/${post.id}/edit`}>Edit post</Link>
+        <div className="pr-2 pt-1 flex justify-end text-xs">
+          {post.createdAt.toISOString().split("T")[0]}
+        </div>
       </div>
     </div>
   );
@@ -32,7 +35,7 @@ async function PostPage({ page }: { page: number }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="flex flex-col place-items-center p-4 gap-4">
       <Link href="/posts/create" className="w-2/3 h-20 outline">

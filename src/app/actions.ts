@@ -3,25 +3,9 @@
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { date, z } from "zod";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
-
-const title =
-  "Post Title this is way way too long for the text box to display or is it? lets see";
-const text = `Lorem Ipsum is simply dummy text of the printing and typesetting industry.
- Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-  when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-   It has survived not only five centuries, but also the leap into electronic typesetting,
-    remaining essentially unchanged.
-     It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-      and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-`;
-
-const testPost = {
-  title: title,
-  content: text,
-};
 
 const PostSchema = z.object({
   id: z.string(),
@@ -31,12 +15,20 @@ const PostSchema = z.object({
 });
 
 const CreatePost = PostSchema.omit({ id: true, createdAt: true });
+const EditPost = PostSchema.omit({ id: true, createdAt: true, title: true });
 
 const perPage = 6;
 
 export type State = {
   errors?: {
     title?: string[];
+    content?: string[];
+  };
+  message?: string | null;
+};
+
+export type EditState = {
+  errors?: {
     content?: string[];
   };
   message?: string | null;
@@ -70,7 +62,42 @@ export async function createPost(prevState: State, postData: FormData) {
     };
   }
 
-  // revalidatePath("/")
+  revalidatePath("/");
+  redirect("/");
+}
+
+export async function editPost(
+  id: string,
+  prevState: EditState,
+  postData: FormData
+) {
+  const validateFields = EditPost.safeParse({
+    content: postData.get("content"),
+  });
+
+  if (!validateFields.success) {
+    return {
+      errors: validateFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to edit post.",
+    };
+  }
+
+  const { content } = validateFields.data;
+
+  try {
+    await prisma.post.update({
+      where: {
+        id: id,
+      },
+      data: {
+        content: content,
+      },
+    });
+  } catch (error) {
+    return { message: "Database Error: Failed to edit post." };
+  }
+
+  revalidatePath("/");
   redirect("/");
 }
 
@@ -94,6 +121,20 @@ export async function fetchPosts(page: number) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch total number of posts.");
+  }
+}
+
+export async function fetchPostByID(id: string) {
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return post;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch post by id:" + id);
   }
 }
 
