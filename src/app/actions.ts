@@ -138,6 +138,22 @@ export async function fetchPostByID(id: string) {
   }
 }
 
+export async function deletePostById(id: string) {
+  try {
+    await prisma.post.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to delete post by id:" + id);
+  }
+
+  revalidatePath("/");
+  redirect("/");
+}
+
 // async function main() {
 //   // ... you will write your Prisma Client queries here
 //   const upload = await prisma.post.create({
