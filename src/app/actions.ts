@@ -1,6 +1,6 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { Post, PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -17,7 +17,7 @@ const PostSchema = z.object({
 const CreatePost = PostSchema.omit({ id: true, createdAt: true });
 const EditPost = PostSchema.omit({ id: true, createdAt: true, title: true });
 
-const perPage = 6;
+const perPage = 7;
 
 export type State = {
   errors?: {
@@ -102,7 +102,7 @@ export async function editPost(
 }
 
 export async function fetchPosts(page: number) {
-  const start = page == 0 ? 0 : page * perPage + 1;
+  const start = page == 1 ? 0 : (page - 1) * perPage + 1;
 
   // await new Promise((resolve) => setTimeout(resolve, 3000));
 
@@ -117,7 +117,7 @@ export async function fetchPosts(page: number) {
       take: perPage,
     });
 
-    return posts;
+    return posts as Post[];
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch total number of posts.");

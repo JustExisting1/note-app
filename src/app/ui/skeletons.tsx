@@ -1,5 +1,5 @@
 const shimmer = "animate-pulse";
-export function PostBoxSkeleton() {
+export function PostCardSkeleton() {
   return (
     <div className={`w-2/3 h-48 bg-gray-600 p-2 rounded-lg`}>
       <div className={`${shimmer} h-8 font-bold text-lg pb-1 truncate`}>
@@ -23,12 +23,12 @@ export function PostBoxSkeleton() {
 export function PostPageSkeleton() {
   return (
     <div className="w-full flex flex-col place-items-center gap-4">
-      <PostBoxSkeleton />
-      <PostBoxSkeleton />
-      <PostBoxSkeleton />
-      <PostBoxSkeleton />
-      <PostBoxSkeleton />
-      <PostBoxSkeleton />
+      <PostCardSkeleton />
+      <PostCardSkeleton />
+      <PostCardSkeleton />
+      <PostCardSkeleton />
+      <PostCardSkeleton />
+      <PostCardSkeleton />
     </div>
   );
 }
